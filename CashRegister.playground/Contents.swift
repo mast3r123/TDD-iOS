@@ -3,15 +3,12 @@ import XCTest
 class CashRegister {
     var availableFunds: Decimal
     
-    init(availableFunds: Decimal = 0) {
+    init(availableFunds: Decimal) {
         self.availableFunds = availableFunds
     }
 }
 
 class CashRegisterTest: XCTestCase {
-    func testInit_createsCashRegister() {
-        XCTAssertNotNil(CashRegister())
-    }
     
     func testInitAvailableFunds_setAvailableFunds() {
         //given

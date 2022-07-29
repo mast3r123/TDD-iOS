@@ -31,21 +31,11 @@ class CashRegisterTest: XCTestCase {
     }
     
     func testInitAvailableFunds_setAvailableFunds() {
-        //given
-        let availableFunds = Decimal(100)
-        
-        //when
-        let sut = CashRegister(availableFunds: availableFunds)
-        
-        //then
         XCTAssertEqual(sut.availableFunds, availableFunds)
     }
     
     func testAddItem_oneItem_addCostsToTransactionTotal() {
         //given
-        let availableFunds = Decimal(100)
-        let sut = CashRegister(availableFunds: availableFunds)
-        
         let item = Decimal(42)
         
         //when

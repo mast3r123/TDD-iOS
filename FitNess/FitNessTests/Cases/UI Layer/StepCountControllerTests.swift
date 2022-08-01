@@ -44,8 +44,7 @@ class StepCountControllerTests: XCTestCase {
   }
   
   override func tearDownWithError() throws {
-    AppModel.instance.dataModel.goal = nil
-    AppModel.instance.restart()
+    restartCalled()
     sut.updateUI()
     
     try super.tearDownWithError()
@@ -60,6 +59,10 @@ class StepCountControllerTests: XCTestCase {
   // MARK: - When
   private func whenStartStopPauseCalled() {
     sut.startStopPause(nil)
+  }
+  
+  private func restartCalled() {
+    AppModel.instance.restart()
   }
   
   // MARK: - Initial State
@@ -108,6 +111,14 @@ class StepCountControllerTests: XCTestCase {
     // then
     let text = sut.startButton.title(for: .normal)
     XCTAssertEqual(text, AppState.inProgress.nextStateButtonLabel)
+  }
+  
+  //MARK: - Restart
+  func testController_whenRestart_isNotStarted() {
+    restartCalled()
+    
+    let state = AppModel.instance.appState
+    XCTAssertEqual(state, .notStarted)
   }
   
   // MARK: - Chase View

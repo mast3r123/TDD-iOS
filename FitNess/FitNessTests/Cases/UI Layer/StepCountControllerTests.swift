@@ -31,24 +31,38 @@
 /// THE SOFTWARE.
 
 import XCTest
-
 @testable import FitNess
 
-class AppModelTests: XCTestCase {
-
-  func testAppModel_whenNotInitialized_isInNotStartedState() {
-    let sut = AppModel()
-    let initialState = sut.appState
-    XCTAssertEqual(initialState, AppState.notStarted)
+class StepCountControllerTests: XCTestCase {
+  
+  var sut: StepCountController!
+  
+  override func setUpWithError() throws {
+    try super.setUpWithError()
+    sut = StepCountController()
   }
   
-  func testAppModel_whenStarted_isInProgress() {
-    let sut = AppModel()
-    
-    sut.start()
-    
-    let observedState = sut.appState
-    XCTAssertEqual(observedState, .inProgress)
+  override func tearDownWithError() throws {
+    sut = nil
+    try super.tearDownWithError()
+  }
+  
+  func testController_whenStartTapped_appIsInProgress() {
+    //when
+    sut.startStopPause(nil)
+
+    //then
+    let state = AppModel.instance.appState
+    XCTAssertEqual(state, AppState.inProgress)
   }
 
+  func testController_whenStartTapped_buttonLabelIsPause() {
+    //when
+    sut.startStopPause(nil)
+
+    //then
+    let text = sut.startButton.title(for: .normal)
+    XCTAssertEqual(text, AppState.inProgress.nextStateButtonLabel)
+  }
+  
 }

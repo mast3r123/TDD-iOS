@@ -1,4 +1,4 @@
-/// Copyright (c) 2021 Razeware LLC
+/// Copyright (c) 2022 Razeware LLC
 /// 
 /// Permission is hereby granted, free of charge, to any person obtaining a copy
 /// of this software and associated documentation files (the "Software"), to deal
@@ -30,78 +30,73 @@
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
 
-import UIKit
+import XCTest
 
-@IBDesignable
-class ChaseView: UIView {
-  let nessieView = UIImageView()
-  let runnerView = UIImageView()
+@testable import FitNess
 
-  var state: AppState = .notStarted {
-    didSet {
-      nessieView.image = state.nessieImage
-      runnerView.image = state.runnerImage
-    }
+class DataModelTests: XCTestCase {
+  
+  var sut: DataModel!
+  
+  override func setUpWithError() throws {
+    try super.setUpWithError()
+    sut = DataModel()
   }
-
-  private func commonSetup() {
-    addSubview(nessieView)
-    addSubview(runnerView)
+  
+  override func tearDownWithError() throws {
+    sut = nil
+    try super.tearDownWithError()
   }
-
-  required init?(coder aDecoder: NSCoder) {
-    super.init(coder: aDecoder)
-    commonSetup()
+  
+  //MARK: - Goal
+  func testModel_whenStarted_goalIsNotReached() {
+    XCTAssertFalse(sut.goalReached, "goalReached should be false when model is created")
   }
-
-  override init(frame: CGRect) {
-    super.init(frame: frame)
-    commonSetup()
+  
+  func testModel_whenStepsReachGoal_goalIsReached() {
+    //given
+    sut.goal = 1000
+    
+    //when
+    sut.steps = 1000
+    
+    //then
+    XCTAssertTrue(sut.goalReached)
   }
-
-  override func prepareForInterfaceBuilder() {
-    super.prepareForInterfaceBuilder()
-
-    let bundle = Bundle(for: ChaseView.self)
-    nessieView.image = UIImage(named: "Nessie", in: bundle, compatibleWith: nil)
-    runnerView.image = UIImage(named: "Runner", in: bundle, compatibleWith: nil)
+  
+  func testGoal_whenUserCaught_goalIsNotReached() {
+    //given goal to reach
+    sut.goal = 1000
+    sut.steps = 1000
+    
+    //when caught by nessie
+    sut.distance = 100
+    sut.nessie.distance = 100
+    
+    //then
+    XCTAssertFalse(sut.goalReached)
   }
-}
-
-extension AppState {
-  var nessieImage: UIImage {
-    let imageName: String
-    switch self {
-    case .notStarted:
-      imageName = "NessieSleeping"
-    case .inProgress:
-      imageName = "Nessie"
-    case .paused:
-      imageName = "NessieSleeping"
-    case .completed:
-      imageName = "NessieLost"
-    case .caught:
-      imageName = "NessieWon"
-    }
-    //swiftlint:disable force_unwrapping
-    return UIImage(named: imageName)!
+  
+  //MARK: - Nessie
+  func testModel_whenStarted_userIsNotCaught() {
+    XCTAssertFalse(sut.caught)
   }
-
-  var runnerImage: UIImage {
-    let imageName: String
-    switch self {
-    case .notStarted:
-      imageName = "RunnerPaused"
-    case .inProgress:
-      imageName = "Runner"
-    case .paused:
-      imageName = "RunnerPaused"
-    case .completed:
-      imageName = "RunnerWon"
-    case .caught:
-      imageName = "RunnerEaten"
-    }
-    //swiftlint:disable force_unwrapping
-    return UIImage(named: imageName)!
+  
+  func testModel_whenUserAheadOfNessie_isNotCaught() {
+    //given
+    sut.distance = 1000
+    sut.nessie.distance = 100
+    
+    //then
+    XCTAssertFalse(sut.caught)
+  }
+  
+  func testModel_whenNessieAheadOfUser_isCaught() {
+    //given
+    sut.distance = 100
+    sut.nessie.distance = 1000
+    
+    //then
+    XCTAssertTrue(sut.caught)
   }
 }

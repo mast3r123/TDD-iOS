@@ -1,4 +1,4 @@
-/// Copyright (c) 2021 Razeware LLC
+/// Copyright (c) 2022 Razeware LLC
 /// 
 /// Permission is hereby granted, free of charge, to any person obtaining a copy
 /// of this software and associated documentation files (the "Software"), to deal
@@ -31,77 +31,11 @@
 /// THE SOFTWARE.
 
 import UIKit
+@testable import FitNess
 
-@IBDesignable
-class ChaseView: UIView {
-  let nessieView = UIImageView()
-  let runnerView = UIImageView()
-
-  var state: AppState = .notStarted {
-    didSet {
-      nessieView.image = state.nessieImage
-      runnerView.image = state.runnerImage
-    }
+func getRootViewController() -> RootViewController {
+  guard let controller = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?.windows.first?.rootViewController as? RootViewController else {
+    assert(false, "Did not get rootviewcontroller")
   }
-
-  private func commonSetup() {
-    addSubview(nessieView)
-    addSubview(runnerView)
-  }
-
-  required init?(coder aDecoder: NSCoder) {
-    super.init(coder: aDecoder)
-    commonSetup()
-  }
-
-  override init(frame: CGRect) {
-    super.init(frame: frame)
-    commonSetup()
-  }
-
-  override func prepareForInterfaceBuilder() {
-    super.prepareForInterfaceBuilder()
-
-    let bundle = Bundle(for: ChaseView.self)
-    nessieView.image = UIImage(named: "Nessie", in: bundle, compatibleWith: nil)
-    runnerView.image = UIImage(named: "Runner", in: bundle, compatibleWith: nil)
-  }
-}
-
-extension AppState {
-  var nessieImage: UIImage {
-    let imageName: String
-    switch self {
-    case .notStarted:
-      imageName = "NessieSleeping"
-    case .inProgress:
-      imageName = "Nessie"
-    case .paused:
-      imageName = "NessieSleeping"
-    case .completed:
-      imageName = "NessieLost"
-    case .caught:
-      imageName = "NessieWon"
-    }
-    //swiftlint:disable force_unwrapping
-    return UIImage(named: imageName)!
-  }
-
-  var runnerImage: UIImage {
-    let imageName: String
-    switch self {
-    case .notStarted:
-      imageName = "RunnerPaused"
-    case .inProgress:
-      imageName = "Runner"
-    case .paused:
-      imageName = "RunnerPaused"
-    case .completed:
-      imageName = "RunnerWon"
-    case .caught:
-      imageName = "RunnerEaten"
-    }
-    //swiftlint:disable force_unwrapping
-    return UIImage(named: imageName)!
-  }
+  return controller
 }

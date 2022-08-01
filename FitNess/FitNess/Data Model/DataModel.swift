@@ -30,78 +30,29 @@
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
 
-import UIKit
+import Foundation
 
-@IBDesignable
-class ChaseView: UIView {
-  let nessieView = UIImageView()
-  let runnerView = UIImageView()
-
-  var state: AppState = .notStarted {
-    didSet {
-      nessieView.image = state.nessieImage
-      runnerView.image = state.runnerImage
+// Add the Data Model class here:
+class DataModel {
+  
+  var goalReached: Bool {
+    if let goal = goal {
+      if steps >= goal, !caught {
+        return true
+      }
     }
+    return false
   }
-
-  private func commonSetup() {
-    addSubview(nessieView)
-    addSubview(runnerView)
-  }
-
-  required init?(coder aDecoder: NSCoder) {
-    super.init(coder: aDecoder)
-    commonSetup()
-  }
-
-  override init(frame: CGRect) {
-    super.init(frame: frame)
-    commonSetup()
-  }
-
-  override func prepareForInterfaceBuilder() {
-    super.prepareForInterfaceBuilder()
-
-    let bundle = Bundle(for: ChaseView.self)
-    nessieView.image = UIImage(named: "Nessie", in: bundle, compatibleWith: nil)
-    runnerView.image = UIImage(named: "Runner", in: bundle, compatibleWith: nil)
-  }
-}
-
-extension AppState {
-  var nessieImage: UIImage {
-    let imageName: String
-    switch self {
-    case .notStarted:
-      imageName = "NessieSleeping"
-    case .inProgress:
-      imageName = "Nessie"
-    case .paused:
-      imageName = "NessieSleeping"
-    case .completed:
-      imageName = "NessieLost"
-    case .caught:
-      imageName = "NessieWon"
-    }
-    //swiftlint:disable force_unwrapping
-    return UIImage(named: imageName)!
-  }
-
-  var runnerImage: UIImage {
-    let imageName: String
-    switch self {
-    case .notStarted:
-      imageName = "RunnerPaused"
-    case .inProgress:
-      imageName = "Runner"
-    case .paused:
-      imageName = "RunnerPaused"
-    case .completed:
-      imageName = "RunnerWon"
-    case .caught:
-      imageName = "RunnerEaten"
-    }
-    //swiftlint:disable force_unwrapping
-    return UIImage(named: imageName)!
+  
+  var goal: Int?
+  var steps: Int = 0
+  
+  
+  //MARK: - Nessie
+  var nessie = Nessie()
+  var distance: Double = 0
+  
+  var caught: Bool {
+    return distance > 0 && nessie.distance >= distance
   }
 }

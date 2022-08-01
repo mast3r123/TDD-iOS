@@ -1,4 +1,4 @@
-/// Copyright (c) 2021 Razeware LLC
+/// Copyright (c) 2022 Razeware LLC
 /// 
 /// Permission is hereby granted, free of charge, to any person obtaining a copy
 /// of this software and associated documentation files (the "Software"), to deal
@@ -30,78 +30,54 @@
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
 
-import UIKit
+import XCTest
+@testable import FitNess
 
-@IBDesignable
-class ChaseView: UIView {
-  let nessieView = UIImageView()
-  let runnerView = UIImageView()
+class StepCountControllerTests: XCTestCase {
+  
+  var sut: StepCountController!
+  
+  override func setUpWithError() throws {
+    try super.setUpWithError()
+    sut = StepCountController()
+  }
+  
+  override func tearDownWithError() throws {
+    sut = nil
+    try super.tearDownWithError()
+  }
+  
+  //MARK: - Initial State
+  func testController_whenCreated_buttonLabelIsStart() {
+    //given
+    sut.viewDidLoad()
+    
+    //then
+    let text = sut.startButton.title(for: .normal)
+    XCTAssertEqual(text, AppState.notStarted.nextStateButtonLabel)
+  }
+  
+  //MARK: - Inprogress State
+  func testController_whenStartTapped_appIsInProgress() {
+    //when
+    whenStartStopPauseCalled()
 
-  var state: AppState = .notStarted {
-    didSet {
-      nessieView.image = state.nessieImage
-      runnerView.image = state.runnerImage
-    }
+    //then
+    let state = AppModel.instance.appState
+    XCTAssertEqual(state, AppState.inProgress)
   }
 
-  private func commonSetup() {
-    addSubview(nessieView)
-    addSubview(runnerView)
-  }
+  func testController_whenStartTapped_buttonLabelIsPause() {
+    //when
+    whenStartStopPauseCalled()
 
-  required init?(coder aDecoder: NSCoder) {
-    super.init(coder: aDecoder)
-    commonSetup()
+    //then
+    let text = sut.startButton.title(for: .normal)
+    XCTAssertEqual(text, AppState.inProgress.nextStateButtonLabel)
   }
-
-  override init(frame: CGRect) {
-    super.init(frame: frame)
-    commonSetup()
+  
+  func whenStartStopPauseCalled() {
+    sut.startStopPause(nil)
   }
-
-  override func prepareForInterfaceBuilder() {
-    super.prepareForInterfaceBuilder()
-
-    let bundle = Bundle(for: ChaseView.self)
-    nessieView.image = UIImage(named: "Nessie", in: bundle, compatibleWith: nil)
-    runnerView.image = UIImage(named: "Runner", in: bundle, compatibleWith: nil)
-  }
-}
-
-extension AppState {
-  var nessieImage: UIImage {
-    let imageName: String
-    switch self {
-    case .notStarted:
-      imageName = "NessieSleeping"
-    case .inProgress:
-      imageName = "Nessie"
-    case .paused:
-      imageName = "NessieSleeping"
-    case .completed:
-      imageName = "NessieLost"
-    case .caught:
-      imageName = "NessieWon"
-    }
-    //swiftlint:disable force_unwrapping
-    return UIImage(named: imageName)!
-  }
-
-  var runnerImage: UIImage {
-    let imageName: String
-    switch self {
-    case .notStarted:
-      imageName = "RunnerPaused"
-    case .inProgress:
-      imageName = "Runner"
-    case .paused:
-      imageName = "RunnerPaused"
-    case .completed:
-      imageName = "RunnerWon"
-    case .caught:
-      imageName = "RunnerEaten"
-    }
-    //swiftlint:disable force_unwrapping
-    return UIImage(named: imageName)!
-  }
+  
 }

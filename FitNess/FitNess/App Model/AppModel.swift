@@ -32,14 +32,21 @@
 
 import Foundation
 
-internal class AppModel {
+class AppModel {
   static let instance = AppModel()
   
-  public var appState: AppState = .notStarted
-  
-  public func start() {
+  let dataModel = DataModel()
+
+  var appState: AppState = .notStarted
+
+  func start() throws {
+    guard dataModel.goal != nil else {
+      throw AppError.goalNotSet
+    }
     appState = .inProgress
   }
-
-  public init() {}
+  
+  func restart() {
+    appState = .notStarted
+  }
 }

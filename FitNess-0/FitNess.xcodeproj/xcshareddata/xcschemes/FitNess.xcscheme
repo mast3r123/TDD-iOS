@@ -30,11 +30,10 @@
       codeCoverageEnabled = "YES">
       <Testables>
          <TestableReference
-            skipped = "NO"
-            testExecutionOrdering = "random">
+            skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "4CCF44012705277700DD29AB"
+               BlueprintIdentifier = "AF29E5B32896B6EA00951134"
                BuildableName = "FitNessTests.xctest"
                BlueprintName = "FitNessTests"
                ReferencedContainer = "container:FitNess.xcodeproj">

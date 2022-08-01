@@ -83,8 +83,7 @@ extension AppState {
     case .caught:
       imageName = "NessieWon"
     }
-    //swiftlint:disable force_unwrapping
-    return UIImage(named: imageName)!
+    return UIImage(imageLiteralResourceName: imageName)
   }
 
   var runnerImage: UIImage {
@@ -101,7 +100,6 @@ extension AppState {
     case .caught:
       imageName = "RunnerEaten"
     }
-    //swiftlint:disable force_unwrapping
-    return UIImage(named: imageName)!
+    return UIImage(imageLiteralResourceName: imageName)
   }
 }
